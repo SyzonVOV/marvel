@@ -19,7 +19,12 @@ class RandomChar extends Component {
   marvelService = new MarvelService();
 
   componentDidMount() {
+    console.log('didMount');
     this.updateChar();
+  }
+
+  componentDidUpdate() {
+    console.log('didUpdate');
   }
 
   saveCharToState(char) {
@@ -41,6 +46,11 @@ class RandomChar extends Component {
     this.setState({ isLoading: false, isError: true });
   };
 
+  handleNewRandom = () => {
+    this.setState({ isLoading: true, isError: false });
+    this.updateChar();
+  };
+
   render() {
     const { char, isLoading, isError } = this.state;
 
@@ -60,7 +70,9 @@ class RandomChar extends Component {
             Do you want to get to know him better?
           </p>
           <p className="randomchar__title">Or choose another one</p>
-          <button className="button button__main">
+          <button
+            className="button button__main"
+            onClick={this.handleNewRandom}>
             <div className="inner">try it</div>
           </button>
           <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
@@ -73,9 +85,22 @@ class RandomChar extends Component {
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
 
+  let imgStyle = { objectFit: 'cover' };
+  if (
+    thumbnail ===
+    'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
+  ) {
+    imgStyle = { objectFit: 'contain' };
+  }
+
   return (
     <div className="randomchar__block">
-      <img src={thumbnail} alt="Random character" className="randomchar__img" />
+      <img
+        src={thumbnail}
+        alt="Random character"
+        className="randomchar__img"
+        style={imgStyle}
+      />
       <div className="randomchar__info">
         <p className="randomchar__name">{name}</p>
         <p className="randomchar__descr">{description}</p>

@@ -1,6 +1,6 @@
 class MarvelService {
   #apiBase = 'https://gateway.marvel.com:443/v1/public/';
-  #apiKey = 'apikey=42a7505dad7c62368124a4189c227ee8';
+  #apiKey = `apikey=${process.env.REACT_APP_API_KEY}`;
 
   getResource = async url => {
     try {
@@ -33,6 +33,7 @@ class MarvelService {
 
   #transformCharacter = hero => {
     return {
+      id: hero.id,
       name: hero.name,
       description: this.#fillMockedText(hero.description),
       thumbnail: hero.thumbnail.path + '.' + hero.thumbnail.extension,

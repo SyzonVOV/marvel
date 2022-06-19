@@ -1,25 +1,50 @@
 class MarvelService {
-  _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-  _apiKey = 'apikey=42a7505dad7c62368124a4189c227ee8';
+  #apiBase = 'https://gateway.marvel.com:443/v1/public/';
+  #apiKey = 'apikey=42a7505dad7c62368124a4189c227ee8';
 
   getResource = async url => {
-    let res = await fetch(url);
+    try {
+      let res = await fetch(url);
 
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+      }
+
+      return await res.json();
+    } catch (err) {
+      console.error(err);
     }
-
-    return await res.json();
   };
 
-  getAllCharacters = () => {
-    return this.getResource(
-      `${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`,
+  getAllCharacters = async () => {
+    const res = await this.getResource(
+      `${this.#apiBase}characters?limit=9&offset=210&${this.#apiKey}`,
     );
+    return res.data.results.map(this.#transformCharacter);
   };
 
-  getCharacter = id => {
-    return this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
+  getCharacter = async id => {
+    let res = await this.getResource(
+      `${this.#apiBase}characters/${id}?${this.#apiKey}`,
+    );
+
+    return this.#transformCharacter(res.data.results[0]);
+  };
+
+  #transformCharacter = hero => {
+    return {
+      name: hero.name,
+      description: this.#fillMockedText(hero.description),
+      thumbnail: hero.thumbnail.path + '.' + hero.thumbnail.extension,
+      homepage: hero.urls[0].url,
+      wiki: hero.urls[1].url,
+    };
+  };
+
+  #fillMockedText = text => {
+    if (!text) return 'No description';
+    // return `${text.slice(0, 210)}...`;
+    return text;
   };
 }
 

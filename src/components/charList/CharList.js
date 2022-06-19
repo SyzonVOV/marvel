@@ -51,9 +51,12 @@ class CharList extends Component {
       return (
         <CharItem
           key={char.id}
+          id={char.id}
           name={char.name}
           thumbnail={char.thumbnail}
-          style={imgStyle}></CharItem>
+          style={imgStyle}
+          onCharSelected={this.props.onCharSelected}
+        />
       );
     });
     return <ul className="char__grid">{items}</ul>;
@@ -81,10 +84,15 @@ class CharList extends Component {
   }
 }
 
-function CharItem(char) {
-  const { name, thumbnail, style } = char;
+function CharItem(prop) {
+  const { name, thumbnail, style, onCharSelected, id } = prop;
+
+  const handleCharSelected = id => () => {
+    onCharSelected(id);
+  };
+
   return (
-    <li className="char__item">
+    <li className="char__item" onClick={handleCharSelected(id)}>
       <img src={thumbnail} alt={name} style={style} />
       <div className="char__name">{name}</div>
     </li>

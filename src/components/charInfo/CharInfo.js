@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -81,6 +82,10 @@ class CharInfo extends Component {
     );
   }
 }
+
+CharInfo.propTypes = {
+  charId: PropTypes.number,
+};
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics } = char;

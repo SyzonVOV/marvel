@@ -124,7 +124,7 @@ function CharItem(prop) {
   };
 
   return (
-    <li className="char__item" onClick={handleCharSelected(id)}>
+    <li className="char__item" tabIndex="0" onClick={handleCharSelected(id)}>
       <img src={thumbnail} alt={name} style={style} />
       <div className="char__name">{name}</div>
     </li>

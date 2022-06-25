@@ -11,6 +11,9 @@ class CharList extends Component {
       chars: [],
       isLoading: true,
       isError: false,
+      isNewItemLoading: false,
+      offset: 210,
+      charEnded: false,
     };
   }
 
@@ -20,17 +23,37 @@ class CharList extends Component {
     this.downloadCharts();
   }
 
-  saveCharToState(chars) {
-    this.setState({ chars, isLoading: false });
+  saveCharToState(newChars) {
+    let ended = false;
+    if (newChars.length < 9) {
+      ended = true;
+    }
+    this.setState(({ chars, offset }) => ({
+      chars: [...chars, ...newChars],
+      isLoading: false,
+      isError: false,
+      isNewItemLoading: false,
+      offset: offset + 9,
+      charEnded: ended,
+    }));
   }
+
+  handleRequestNewCharts = offset => {
+    this.changeCharListLoadingStatus();
+    this.downloadCharts(offset);
+  };
 
   handleError = () => {
     this.setState({ isLoading: false, isError: true });
   };
 
-  downloadCharts = () => {
+  changeCharListLoadingStatus = () => {
+    this.setState({ isNewItemLoading: true });
+  };
+
+  downloadCharts = offset => {
     this.marvelService
-      .getAllCharacters()
+      .getAllCharacters(offset)
       .then(res => {
         // res includes the character object, appropriate for the state
         this.saveCharToState(res);
@@ -63,20 +86,27 @@ class CharList extends Component {
   }
 
   render() {
-    const { chars, loading, error } = this.state;
+    const { chars, isLoading, isError, isNewItemLoading, offset, charEnded } =
+      this.state;
 
     const items = this.renderItems(chars);
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? items : null;
+    const errorMessage = isError ? <ErrorMessage /> : null;
+    const spinner = isLoading ? <Spinner /> : null;
+    const content = !(isLoading || isError) ? items : null;
 
     return (
       <div className="char__list">
         {errorMessage}
         {spinner}
         {content}
-        <button className="button button__main button__long">
+        <button
+          className="button button__main button__long"
+          disabled={isNewItemLoading}
+          style={{ display: charEnded ? 'none' : 'block' }}
+          onClick={() => {
+            this.handleRequestNewCharts(offset);
+          }}>
           <div className="inner">load more</div>
         </button>
       </div>
@@ -98,14 +128,5 @@ function CharItem(prop) {
     </li>
   );
 }
-
-/*  <li className="char__item">
-                    <img src={abyss} alt="abyss" />
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item char__item_selected">
-                    <img src={abyss} alt="abyss" />
-                    <div className="char__name">Abyss</div>
-                </li> */
 
 export default CharList;

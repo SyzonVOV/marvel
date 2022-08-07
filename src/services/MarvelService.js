@@ -1,42 +1,30 @@
-class MarvelService {
-  #apiBase = 'https://gateway.marvel.com:443/v1/public/';
-  #apiKey = `apikey=${process.env.REACT_APP_API_KEY}`;
-  #baseOffset = 210;
+import { useHttp } from '../hooks/http.hook';
 
-  getResource = async url => {
-    try {
-      let res = await fetch(url);
+const useMarvelService = () => {
+  const { loading, request, error, clearError } = useHttp();
 
-      if (!res.ok) {
-        throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-      }
+  const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+  const _apiKey = `apikey=${process.env.REACT_APP_API_KEY}`;
+  const _baseOffset = 210;
 
-      return await res.json();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  getAllCharacters = async (offset = this.#baseOffset) => {
-    const res = await this.getResource(
-      `${this.#apiBase}characters?limit=9&offset=${offset}&${this.#apiKey}`,
+  const getAllCharacters = async (offset = _baseOffset) => {
+    const res = await request(
+      `${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`,
     );
-    return res.data.results.map(this.#transformCharacter);
+    return res.data.results.map(_transformCharacter);
   };
 
-  getCharacter = async id => {
-    let res = await this.getResource(
-      `${this.#apiBase}characters/${id}?${this.#apiKey}`,
-    );
+  const getCharacter = async id => {
+    let res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
 
-    return this.#transformCharacter(res.data.results[0]);
+    return _transformCharacter(res.data.results[0]);
   };
 
-  #transformCharacter = hero => {
+  const _transformCharacter = hero => {
     return {
       id: hero.id,
       name: hero.name,
-      description: this.#fillMockedText(hero.description),
+      description: _fillMockedText(hero.description),
       thumbnail: hero.thumbnail.path + '.' + hero.thumbnail.extension,
       homepage: hero.urls[0].url,
       wiki: hero.urls[1].url,
@@ -44,11 +32,21 @@ class MarvelService {
     };
   };
 
-  #fillMockedText = text => {
+  const _fillMockedText = text => {
     if (!text) return 'No description';
     // return `${text.slice(0, 210)}...`;
     return text;
   };
-}
 
-export default MarvelService;
+  return {
+    loading,
+    error,
+    clearError,
+    getAllCharacters,
+    getCharacter,
+    // getAllComics,
+    // getComics,
+  };
+};
+
+export default useMarvelService;

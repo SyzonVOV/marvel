@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import AppBanner from '../appBanner/AppBanner';
 import './singleComic.scss';
 
 const SingleComic = () => {
@@ -14,6 +13,7 @@ const SingleComic = () => {
 
   useEffect(() => {
     updateComic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comicId]);
 
   const updateComic = () => {

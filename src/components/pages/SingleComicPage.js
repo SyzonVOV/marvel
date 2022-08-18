@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import SingleComic from '../singleComic/SingleComic';
 import AppBanner from './../appBanner/AppBanner';
 

@@ -3,18 +3,14 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
+import setContent from './../../utils/setContent';
 
 const CharInfo = props => {
   const [char, setChar] = useState(null);
 
   const {
-    loading,
-    error,
     getCharacter,
     clearError,
     processState: process,
@@ -42,27 +38,13 @@ const CharInfo = props => {
     setChar(char);
   };
 
-  const setContent = (process, data) => {
-    switch (process) {
-      case 'waiting':
-        return <Skeleton />;
-      case 'loading':
-        return <Spinner />;
-      case 'confirmed':
-        return <View char={data} />;
-      case 'error':
-        return <ErrorMessage />;
-      default:
-        throw new Error('Unexpected process state');
-    }
-  };
-
-  // const skeleton = char || loading || error ? null : <Skeleton />;
-  // const errorMessage = error ? <ErrorMessage /> : null;
-  // const spinner = loading ? <Spinner /> : null;
-  // const content = !(loading || error || !char) ? <View char={char} /> : null;
-
-  return <div className="char__info">{setContent(process, char)}</div>;
+  return (
+    <div className="char__info">
+      {setContent(process, () => (
+        <View char={char} />
+      ))}
+    </div>
+  );
 };
 
 CharInfo.propTypes = {

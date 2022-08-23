@@ -12,8 +12,14 @@ import './charInfo.scss';
 const CharInfo = props => {
   const [char, setChar] = useState(null);
 
-  const { loading, error, getCharacter, clearError, process, setProcess } =
-    useMarvelService();
+  const {
+    loading,
+    error,
+    getCharacter,
+    clearError,
+    processState: process,
+    setProcess,
+  } = useMarvelService();
 
   useEffect(() => {
     updateChar();

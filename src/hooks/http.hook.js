@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 export const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [process, setProcess] = useState('waiting');
+  const [processState, setProcess] = useState('waiting');
 
   const request = useCallback(
     async (
@@ -46,5 +46,5 @@ export const useHttp = () => {
     setProcess('loading');
   }, []);
 
-  return { loading, request, error, clearError, process, setProcess };
+  return { loading, request, error, clearError, processState, setProcess };
 };
